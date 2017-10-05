@@ -1,0 +1,84 @@
+%%%%%
+% typesetting
+%%%%%
+\usepackage[OT1]{fontenc}   % 
+\usepackage[utf8]{inputenc} % enables use of æ,ø,å
+\usepackage[danish,german,english]{babel}
+\usepackage{lmodern}
+
+
+%%%
+% verbatim
+%%%
+\usepackage{verbatim}
+\usepackage{fancyvrb} % for \Verb + \Verbatiminput
+
+%%%%
+% general packages
+%%%%
+%\usepackage{etex} % extended tex, for using more than 256 registers for coding
+
+% make danish text with æøå
+\newcommand{\textdanish}[1]%
+{%
+      \foreignlanguage{danish}{#1}%
+}
+
+%%%%
+% code listing
+%%%%
+\usepackage{xcolor}
+\usepackage{listings}
+
+%%%%
+% math
+%%%%
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+%%%%
+% tikz/graphics
+%%%%
+\usepackage{tikz}
+%\usetikzlibrary{arrows.meta}
+\usetikzlibrary{arrows}
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{decorations.markings}
+\usepackage{graphicx}
+\usepackage{subcaption} % for subfigure
+
+%%%%%
+% for tabulars
+%%%%%
+\usepackage{multirow}
+
+%%%%
+% text colorbox
+%%%%
+\usepackage[listings,most]{tcolorbox}
+\tcbset{
+  colback=black,
+}
+
+\newcommand{\hiddenhint}[1] %
+{ %
+\newline
+\begin{tcolorbox}{ {\color{black} \emph{Hint:} } {#1} } \end{tcolorbox}
+%\begin{tcolorbox}{\color{black} \emph{Hint:} } {#1}\end{tcolorbox}
+%\emph{HiddenHint:} {#1}
+} %
+
+\newcommand{\hint}[1] %
+{ %
+\emph{Hint:} {#1}
+} %
+
+%%%%%
+% spaces
+%%%%%
+\newcommand{\verticalspace}{\vspace{0.3cm}}
+\newcommand{\mediumverticalspace}{\vspace{0.2cm}}
+\newcommand{\smallverticalspace}{\vspace{0.1cm}}
+\newcommand{\horizontalspace}{\hspace{1cm}}

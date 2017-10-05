@@ -1,0 +1,112 @@
+\documentclass[]{article}
+
+\input{../../../header.tex}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.13}
+
+\usetikzlibrary{external}\tikzexternalize
+\usetikzlibrary{shapes}   % for diamond shape
+\usetikzlibrary{fit}   % for diamond shape
+\usetikzlibrary{shadows.blur}
+\usetikzlibrary{decorations.pathreplacing}
+
+\pgfdeclarelayer{bg}    % declare background layer
+\pgfsetlayers{bg,main}  % set the order of the layers (main is the standard layer)
+
+% Draw input layer
+\newcommand{\drawinputlayer}[1]{
+   \foreach \name / \y in {1,...,#1}
+   % This is the same as writing \foreach \name / \y in {1/1,2/2,3/3,4/4}
+      \node[input neuron, pin={[pin edge={line width=0.3mm}]left:Input \y}] (I-\name) at (0,-\y) {};
+}
+
+% Draw hidden layer
+\newcommand{\drawhiddenlayer}[3]{
+   \foreach \name / \y in {1,...,#1}
+      \path[yshift=#3cm]
+         node[hidden neuron] (H#2-\name) at (#2 * \layersep, -\y cm) {};
+}
+
+% Draw output layer
+\newcommand{\drawoutputlayer}[2]{
+   \foreach \name / \y in {1,...,#1}
+      \path[yshift=-0.5cm]
+         node[output neuron, pin={[pin edge={->, line width=0.3mm}]right:Output \y}] (O-\name) at (#2 * \layersep, -\y cm) {};
+}
+
+% Connect layers
+\newcommand{\connectlayers}[4]{
+   \foreach \source in {1,...,#2}
+      \foreach \dest in {1,...,#4}
+         \path (#1-\source) edge[line width=0.3mm] (#3-\dest);
+}
+
+\begin{document}
+\def\layersep{2cm}
+\begin{tikzpicture}[font=\huge]
+   \tikzstyle{arrow}=[->,draw=black!70, node distance=\layersep]
+   \tikzstyle{every pin edge}=[<-,shorten <=1pt]
+   \tikzstyle{neuron}=[circle,thick,draw=black,minimum size=17pt,inner sep=0pt]
+   \tikzstyle{input}=[text=blue,minimum size=22pt];
+   \tikzstyle{weight}=[neuron, minimum size=22pt];
+   \tikzstyle{sum}=[neuron, minimum size=30pt];
+   \tikzstyle{activation}=[neuron, rectangle, minimum size=30pt];
+   \tikzstyle{annot} = [text width=20em, text centered];
+   \tikzstyle{layerbg} = [rectangle, rounded corners];
+
+   %\begin{axis}[
+   %      ymin=0, ymax=1,
+   %      xmin=-1, xmax=1,
+   %      samples=50,
+   %   ]
+   %   \addplot[blue, ultra thick] {exp(x)};
+   %\end{axis}
+   \begin{axis}[name=lol, xmin=-0.2,xmax=1.2,ymin=-0.2,ymax=1.2,no markers,samples=50,
+      ytick={0,1},
+      xtick={0,1},
+      xlabel={$x_1$},
+      ylabel={$x_2$},
+      ]
+      \node at (0,0) {$\boldsymbol{0}$};
+      \node at (0,1) {$\boldsymbol{1}$};
+      \node at (1,0) {$\boldsymbol{1}$};
+      \node at (1,1) {$\boldsymbol{0}$};
+   \end{axis}
+
+   \node[annot, yshift=0.5cm] at (lol.north) (xa) {Original $\boldsymbol{x}$ space};
+\end{tikzpicture}
+
+\begin{tikzpicture}[font=\huge]
+   \tikzstyle{arrow}=[->,draw=black!70, node distance=\layersep]
+   \tikzstyle{every pin edge}=[<-,shorten <=1pt]
+   \tikzstyle{neuron}=[circle,thick,draw=black,minimum size=17pt,inner sep=0pt]
+   \tikzstyle{input}=[text=blue,minimum size=22pt];
+   \tikzstyle{weight}=[neuron, minimum size=22pt];
+   \tikzstyle{sum}=[neuron, minimum size=30pt];
+   \tikzstyle{activation}=[neuron, rectangle, minimum size=30pt];
+   \tikzstyle{annot} = [text width=20em, text centered];
+   \tikzstyle{layerbg} = [rectangle, rounded corners];
+
+   %\begin{axis}[
+   %      ymin=0, ymax=1,
+   %      xmin=-1, xmax=1,
+   %      samples=50,
+   %   ]
+   %   \addplot[blue, ultra thick] {exp(x)};
+   %\end{axis}
+   \begin{axis}[name=lol, xmin=-0.2,xmax=2.2,ymin=-0.2,ymax=1.2,no markers,samples=50,
+      ytick={0,1},
+      xtick={0,1,2},
+      xlabel={$h_1$},
+      ylabel={$h_2$},
+      ]
+      \node at (0,0) {$\boldsymbol{0}$};
+      \node at (1,0) {$\boldsymbol{1}$};
+      \node at (2,1) {$\boldsymbol{0}$};
+   \end{axis}
+
+   \node[annot, yshift=0.5cm] at (lol.north) (xa) {Learned $\boldsymbol{h}$ space};
+\end{tikzpicture}
+
+\end{document}

@@ -1,0 +1,177 @@
+\documentclass[]{article}
+
+\input{../../../header.tex}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.13}
+
+\usetikzlibrary{external}\tikzexternalize
+\usetikzlibrary{shapes}   % for diamond shape
+\usetikzlibrary{fit}   % for diamond shape
+\usetikzlibrary{shadows.blur}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{matrix}
+
+\pgfdeclarelayer{bg}    % declare background layer
+\pgfsetlayers{bg,main}  % set the order of the layers (main is the standard layer)
+
+% Draw input layer
+\newcommand{\drawinputlayer}[1]{
+   \foreach \name / \y in {1,...,#1}
+   % This is the same as writing \foreach \name / \y in {1/1,2/2,3/3,4/4}
+      \node[input neuron, pin={[pin edge={line width=0.3mm}]left:Input \y}] (I-\name) at (0,-\y) {};
+}
+
+% Draw hidden layer
+\newcommand{\drawhiddenlayer}[3]{
+   \foreach \name / \y in {1,...,#1}
+      \path[yshift=#3cm]
+         node[hidden neuron] (H#2-\name) at (#2 * \layersep, -\y cm) {};
+}
+
+% Draw output layer
+\newcommand{\drawoutputlayer}[2]{
+   \foreach \name / \y in {1,...,#1}
+      \path[yshift=-0.5cm]
+         node[output neuron, pin={[pin edge={->, line width=0.3mm}]right:Output \y}] (O-\name) at (#2 * \layersep, -\y cm) {};
+}
+
+% Connect layers
+\newcommand{\connectlayers}[4]{
+   \foreach \source in {1,...,#2}
+      \foreach \dest in {1,...,#4}
+         \path (#1-\source) edge[line width=0.3mm] (#3-\dest);
+}
+
+\begin{document}
+\def\layersep{2.5cm}
+\begin{tikzpicture}
+   \tikzstyle{arrow}=[->,draw=black!70, node distance=\layersep]
+   \tikzstyle{every pin edge}=[<-,shorten <=1pt]
+   \tikzstyle{neuron}=[circle,thick,draw=black,minimum size=17pt,inner sep=0pt]
+   \tikzstyle{input}=[text=blue,minimum size=22pt];
+   \tikzstyle{weight}=[neuron, minimum size=22pt];
+   \tikzstyle{sum}=[neuron, minimum size=30pt];
+   \tikzstyle{activation}=[neuron, rectangle, minimum size=30pt];
+   \tikzstyle{annot} = [text width=20em, text centered];
+   \tikzstyle{layerbg} = [rectangle, rounded corners];
+   
+   \node[] at (0,0) (W) {
+      \(\boldsymbol{W} = 
+      \begin{bmatrix}
+         1 & 1 \\
+         1 & 1 \\
+      \end{bmatrix}\)
+
+   };
+   \node[xshift=1.2cm] at (W.east) (c) {
+      \(\boldsymbol{c} = 
+      \begin{bmatrix}
+         0 \\
+         -1 \\
+      \end{bmatrix}\)
+   };
+   \node[xshift=1.2cm] at (c.east) (w) {
+      \(\boldsymbol{w} =
+      \begin{bmatrix}
+         1  \\
+         -2 \\
+      \end{bmatrix}\)
+   };
+   \node[xshift=1.2cm] at (w.east) (b) {
+      \( b = 0 \)
+   };
+   \node[xshift=+0.75cm, yshift=+0.5cm] at (c.north) (f) {
+      \(
+      f\left( \boldsymbol{x}; \boldsymbol{W}, \boldsymbol{c}, \boldsymbol{w}, b \right) = \boldsymbol{w}^T \max \left(0, \boldsymbol{W}^T \boldsymbol{x} + \boldsymbol{c} \right) + b
+      \)
+   };
+
+   \begin{pgfonlayer}{bg}
+      \node[layerbg,fit={(W) (c) (w) (b) (f)},very thick, draw=gray,inner sep=0.25cm] (nbg) {};
+   \end{pgfonlayer}
+   \node[annot, centered, font=\large, yshift=0.5cm, xshift=-0.2cm, text=gray] (pc) at (nbg.north) {The complete XOR model};
+\end{tikzpicture}
+
+\begin{tikzpicture}
+   \tikzstyle{arrow}=[->,draw=black!70, node distance=\layersep]
+   \tikzstyle{every pin edge}=[<-,shorten <=1pt]
+   \tikzstyle{neuron}=[circle,thick,draw=black,minimum size=17pt,inner sep=0pt]
+   \tikzstyle{input}=[text=blue,minimum size=22pt];
+   \tikzstyle{weight}=[neuron, minimum size=22pt];
+   \tikzstyle{sum}=[neuron, minimum size=30pt];
+   \tikzstyle{activation}=[neuron, rectangle, minimum size=30pt];
+   \tikzstyle{annot} = [text width=20em, text centered];
+   \tikzstyle{layerbg} = [rectangle, rounded corners];
+   
+   % Matrices
+   \node[] at (0,0) (X) {
+      \(
+      \begin{bmatrix}
+         0 & 0 \\
+         0 & 1 \\
+         1 & 0 \\
+         1 & 1 \\
+      \end{bmatrix}
+      \)
+
+   };
+   \node[xshift=-0.2cm] at (X.west) {
+      \( X : \)
+   };
+   \node[] at (\layersep,0) (XW) {
+      \(
+      \begin{bmatrix}
+         0 & 0 \\
+         1 & 1 \\
+         1 & 1 \\
+         2 & 2 \\
+      \end{bmatrix}
+      \)
+   };
+   \node[] at (2 * \layersep,0) (c) {
+      \(
+      \begin{bmatrix}
+         0 & -1 \\
+         1 & 0 \\
+         1 & 0 \\
+         2 & 1 \\
+      \end{bmatrix}
+      \)
+   };
+   \node[] at (3 * \layersep,0) (rect) {
+      \(
+      \begin{bmatrix}
+         0 & 0 \\
+         1 & 0 \\
+         1 & 0 \\
+         2 & 1 \\
+      \end{bmatrix}
+      \)
+   };
+   \node[] at (4 * \layersep,0) (res) {
+      \(
+      \begin{bmatrix}
+         0 \\
+         1 \\
+         1 \\
+         0 \\
+      \end{bmatrix}
+      \)
+   };
+
+   % Arrows
+   \path (X) edge[arrow,line width=0.3mm] node [above,midway,font=\scriptsize] {\(\boldsymbol{W} \)} (XW);
+   \path (XW) edge[arrow,line width=0.3mm] node [above,midway,font=\scriptsize] {\(+ \boldsymbol{c} \)} (c);
+   \path (c) edge[arrow,line width=0.3mm] node [above,midway,font=\scriptsize] {\textbf{ReLU}} (rect);
+   \path (rect) edge[arrow,line width=0.3mm] node [above,midway,font=\scriptsize] {\(\boldsymbol{w}^T\)} (res);
+
+   %\begin{pgfonlayer}{bg}
+   %   \node[layerbg,fit={(W) (c) (w) (f)},very thick, draw=gray,inner sep=0.25cm] (nbg) {};
+   %\end{pgfonlayer}
+   %\node[annot, centered, font=\large, yshift=0.5cm, xshift=-0.2cm, text=gray] (pc) at (nbg.north) {The complete XOR model};
+\end{tikzpicture}
+
+   
+
+\end{document}

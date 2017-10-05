@@ -1,0 +1,203 @@
+%%%%
+%
+% includes needed
+%
+%%%%
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage[margin=10pt]{caption}
+\usepackage{listings}
+\usepackage{fancyvrb} % for \Verb
+
+%%%%
+%
+% General settings
+%
+%%%%
+% color setup
+\definecolor{listinggray}{gray}{0.98}
+%\colorlet{listinggray}{gray!40}
+\definecolor{lbcolor}{rgb}{0.9,0.9,0.9}
+
+\lstset{
+   frame=tb
+ , frameround=ftft
+ , numbers=left      % put code line numbers on left
+ , numberstyle=\tiny\color[rgb]{0.205, 0.142, 0.73}% size of line numbers
+ , numbersep=5pt
+ , xleftmargin=\parindent % set left margin to paragraph indention
+ , captionpos=tl
+ %, backgroundcolor=\color{lbcolor}
+ , backgroundcolor=\color{listinggray}
+ , keywordstyle=\color[rgb]{0,0,1}
+ , commentstyle=\color{violet}
+ , stringstyle=\color{red}
+ , basicstyle=\ttfamily\lst@ifdisplaystyle\scriptsize\fi
+}
+
+% set code size
+%\def{\codesize}{\lst@ifdisplaystyle\scriptsize\fi}
+
+\newcommand{\inlinecode}[2][cpp]{\lstinline[style=custom#1,prebreak=]{#2}}
+\newcommand{\includecode}[3][cpp]{\lstinputlisting[caption={#2 \hfill
+\texttt{\scriptsize (\lstname)}},style=custom#1]{#3}}
+
+% caption setup
+\DeclareCaptionLabelFormat{advancedlabelformat}{[ #1 ]}
+%\DeclareCaptionFormat{advancedformat}{\colorbox{cmyk}{0.43, 0.35, 0.35,0.01}{\parbox{\textwidth}{#1 #3}}}
+\DeclareCaptionFormat{advancedformat}{#1 #3}
+\captionsetup[lstlisting]{
+   format=advancedformat
+ , labelformat=advancedlabelformat
+}
+
+
+%%%%
+%
+% Cpp enviroment
+%
+%%%%
+\newcommand{\cppname}{{C{}\Verb|++|}} % name of cpp listings
+
+% cpp style
+\lstdefinestyle{customcpp}{
+   language=[ISO]C++
+ %, keywordstyle=\color{red!20!darkgreen}\bfseries
+ %, keywordstyle=\color{yellow!60!green}\bf
+ %, commentstyle=\color{blue}
+ %, stringstyle=\ttfamily\color{red!50!brown}
+ , showstringspaces=false
+ , escapechar=£
+ %, basicstyle=\ttfamily\codesize
+ , flexiblecolumns=true
+ , keywords=[2]{final,override,nullptr,uchar,size_t}
+ %, literate=%
+ %     *{0}{{{\color{red!20!violet}0}}}1
+ %      {1}{{{\color{red!20!violet}1}}}1
+ %      {2}{{{\color{red!20!violet}2}}}1
+ %      {3}{{{\color{red!20!violet}3}}}1
+ %      {4}{{{\color{red!20!violet}4}}}1
+ %      {5}{{{\color{red!20!violet}5}}}1
+ %      {6}{{{\color{red!20!violet}6}}}1
+ %      {7}{{{\color{red!20!violet}7}}}1
+ %      {8}{{{\color{red!20!violet}8}}}1
+ %      {9}{{{\color{red!20!violet}9}}}1
+}
+
+% cpp environment
+\lstnewenvironment{cpp}[1][]
+{ 
+   \renewcommand\lstlistingname{\cppname{}}
+   \lstset{style=customcpp,caption={#1 \hfill \ }}
+}
+{ }
+
+% inline cpp
+\newcommand{\icpp}[1]{
+   \inlinecode[cpp]{#1}
+}
+
+% include cpp file
+\newcommand{\includecpp}[2][]{
+   \renewcommand\lstlistingname{\cppname{}}
+   \includecode[cpp]{#1}{#2}
+}
+
+
+%%%%
+%
+% Fortran
+%
+%%%%
+\newcommand{\fortranname}{FORTRAN}
+
+\lstdefinestyle{customfortran}{
+   language=fortran
+ , basicstyle=\ttfamily\codesize
+}
+
+\lstnewenvironment{fortran}[1]
+{ 
+   \renewcomman\lstlistingname{\fortranname{}}
+   \lstset{style=customfortran,caption={#1 \hfill \ }} 
+}
+{ }
+
+\newcommand{\ifortran}[1]{\inlinecode[fortran]{#1}}
+
+
+
+%%%%%
+%
+% Assembly
+%
+%%%%%
+\newcommand{\asmname}{ASM}
+
+\lstdefinestyle{customasm}{
+   language=[x86masm]Assembler
+ %, basicstyle=\codesize\ttfamily
+ , commentstyle=\itshape\color{purple!40!black}
+}
+
+\lstnewenvironment{asm}[1]
+{
+   \renewcommand\lstlistingname{\asmname{}}
+   \lstset{style=customasm,caption={#1 \hfill \ }} 
+}
+{ }
+
+\newcommand{\iasm}[1]{\inlinecode[asm]{#1}}
+
+%%%%
+% bash
+%%%%
+\newcommand{\bashname}{Bash}
+
+\lstdefinestyle{custombash}{
+   language=bash
+ %, basicstyle=\codesize\ttfamily
+}
+
+\lstnewenvironment{bash}[1]
+{
+   \renewcommand\lstlistingname{\bashname{}}
+   \lstset{style=custombash,caption={#1 \hfill \ }} 
+}
+{ }
+
+\newcommand{\includebash}[2][]{
+   \renewcommand\lstlistingname{\bashname{}}
+   \includecode[bash]{#1}{#2}
+}
+
+%%%%
+% terminal
+%%%%%
+\lstdefinestyle{customterminal}{
+   language=bash
+ %, backgroundcolor=\color{white}
+ , backgroundcolor=\color{listinggray}
+ , keywordstyle=\color{black}
+ , commentstyle=\color{black}
+ , stringstyle=\color{black}
+ , numberstyle=\color{black}
+ , frame=
+ , numbers=none  % put code line numbers on left
+ %, basicstyle=\codesize\ttfamily
+}
+
+%\newenvcommand{terminal}{\command}[1]
+%{
+%$ #1
+%}
+
+\lstnewenvironment{terminal}[1][]
+{
+ % \checkenvcommand
+  \renewcommand\lstlistingname{Terminal}
+  \lstset{style=customterminal,caption={#1 \hfill \ }} 
+}
+{ }
+
+\newcommand{\iterminal}[1]{\inlinecode[terminal]{#1}}

@@ -1,0 +1,31 @@
+%%%%
+%
+% ls.tex
+%
+%%%%
+
+\usepackage{fancyvrb}
+
+\def\lscounter{0}
+\newcommand{\lsoutput}{}
+\newcommand{\lscommand}{}
+
+\newcommand{\ifsecondboth}[2]{
+  \if #2\empty
+    \empty
+  \else
+    #1#2
+  \fi
+}
+
+\newcommand{\ls}[2][]{
+  \renewcommand{\lsoutput}{lsoutput\lscounter.tex}
+  \renewcommand{\lscommand}{ls \ifsecondboth{-}{#1} #2}
+  \immediate\write18{\lscommand > \lsoutput}
+  %\Verb{test}
+  {\scriptsize \texttt{\$ \lscommand} }
+  \VerbatimInput[fontsize=\scriptsize]{\lsoutput}
+  \count0=\lscounter\relax % put lscounter in to register 0
+  \advance\count0 by 1     % advance counter by 1
+  \def\lscounter{\the\count0} % put counter back into lscounter
+}

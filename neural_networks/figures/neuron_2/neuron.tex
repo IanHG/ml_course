@@ -1,0 +1,109 @@
+\documentclass[]{article}
+
+\input{../../../header.tex}
+
+%\usetikzlibrary{external}\tikzexternalize
+\usetikzlibrary{shapes}   % for diamond shape
+\usetikzlibrary{fit}   % for diamond shape
+\usetikzlibrary{shadows.blur}
+
+\pgfdeclarelayer{bg}    % declare background layer
+\pgfsetlayers{bg,main}  % set the order of the layers (main is the standard layer)
+
+% Draw input layer
+\newcommand{\drawinputlayer}[1]{
+   \foreach \name / \y in {1,...,#1}
+   % This is the same as writing \foreach \name / \y in {1/1,2/2,3/3,4/4}
+      \node[input neuron, pin={[pin edge={line width=0.3mm}]left:Input \y}] (I-\name) at (0,-\y) {};
+}
+
+% Draw hidden layer
+\newcommand{\drawhiddenlayer}[3]{
+   \foreach \name / \y in {1,...,#1}
+      \path[yshift=#3cm]
+         node[hidden neuron] (H#2-\name) at (#2 * \layersep, -\y cm) {};
+}
+
+% Draw output layer
+\newcommand{\drawoutputlayer}[2]{
+   \foreach \name / \y in {1,...,#1}
+      \path[yshift=-0.5cm]
+         node[output neuron, pin={[pin edge={->, line width=0.3mm}]right:Output \y}] (O-\name) at (#2 * \layersep, -\y cm) {};
+}
+
+% Connect layers
+\newcommand{\connectlayers}[4]{
+   \foreach \source in {1,...,#2}
+      \foreach \dest in {1,...,#4}
+         \path (#1-\source) edge[line width=0.3mm] (#3-\dest);
+}
+
+\begin{document}
+\def\layersep{2cm}
+\begin{tikzpicture}
+   \tikzstyle{arrow}=[->,draw=black!70, node distance=\layersep]
+   \tikzstyle{every pin edge}=[<-,shorten <=1pt]
+   \tikzstyle{neuron}=[circle,thick,draw=black,minimum size=17pt,inner sep=0pt]
+   \tikzstyle{input}=[text=blue,minimum size=22pt];
+   \tikzstyle{weight}=[neuron, minimum size=22pt];
+   \tikzstyle{invisneuron}=[circle,thick,draw=white,minimum size=17pt,inner sep=0pt]
+   \tikzstyle{invisweight}=[invisneuron, minimum size=22pt];
+   \tikzstyle{sum}=[neuron, minimum size=30pt];
+   \tikzstyle{activation}=[neuron, rectangle, minimum size=30pt];
+   \tikzstyle{annot} = [font=\scriptsize,text width=3em, text centered];
+   \tikzstyle{layerbg} = [rectangle, rounded corners];
+
+   % Draw inputs
+   \node[input] (I-1) at (-\layersep, 0) {$h^{(i)}_1$};
+   \node[input] (I-2) at (-\layersep,-1) {$h^{(i)}_2$};
+   \node[input] (I-M) at (-\layersep,-3) {$h^{(i)}_{m}$};
+   \path (I-2) -- (I-M) node [blue, font=\Huge, midway, sloped] {$\dots$};
+   \draw[blue,decorate,decoration={brace,amplitude=10pt, mirror},thick] (I-1.north west) -- (I-M.south west) node[annot,midway,blue,xshift=-0.8cm] {Input};
+
+   % Draw the weights
+   \node[invisweight] (W-0) at (0, 1) {};
+   \node[weight] (W-1) at (0, 0) {$w_{k1}$};
+   \node[weight] (W-2) at (0,-1) {$w_{k2}$};
+   \node[weight] (W-M) at (0,-3) {$w_{km}$};
+   \path (W-2) -- (W-M) node [black, font=\Huge, midway, sloped] {$\dots$};
+   \node[annot,below of=W-M, node distance=0.82cm] (sw) {Synaptic weights};
+
+   % Draw summing function
+   \node[sum, font=\Large] (SUM) at (\layersep, -1.5) {$\Sigma$};
+   \node[annot,below of=SUM, node distance=0.82cm] (sj) {Summing junction};
+
+   % Draw activation function
+   \node[activation] (ACT) at (2 * \layersep, -1.5) {$f \left( . \right)$};
+   \node[annot,below of=ACT, node distance=0.82cm] (af) {Activation function};
+
+   % Draw output
+   \node[input] (O-1) at (3 * \layersep, -1.5) {$h^{(o)}_k$};
+   %\node[annot,text=blue,below of=O-1, node distance=0.82cm] (o) {Output};
+   \node[annot,text=blue,right of=O-1, node distance=0.82cm] (o) {Output};
+
+   % Draw bias
+   \node[input] (B-1) at (\layersep, 0.3) {$b_k$};
+   \node[annot,text=blue,above of=B-1, node distance=0.48cm] (o) {Bias};
+
+   % Draw arrows
+   \path (I-1) edge[arrow, line width=0.3mm] (W-1);
+   \path (I-2) edge[arrow, line width=0.3mm] (W-2);
+   \path (I-M) edge[arrow, line width=0.3mm] (W-M);
+
+   \path (W-1) edge[arrow, line width=0.3mm] (SUM);
+   \path (W-2) edge[arrow, line width=0.3mm] (SUM);
+   \path (W-M) edge[arrow, line width=0.3mm] (SUM);
+   
+   \path (SUM) edge[arrow, line width=0.3mm] (ACT);
+   
+   \path (ACT) edge[arrow, line width=0.3mm] (O-1);
+   
+   \path (B-1) edge[arrow, line width=0.3mm] (SUM);
+
+   \begin{pgfonlayer}{bg}
+      \node[layerbg,fit={(B-1) (W-0) (W-1) (W-2) (W-M) (SUM) (ACT) (sw) (af)},very thick,draw=gray,inner sep=0.4cm] (nbg) {};
+   \end{pgfonlayer}
+   \node[annot, centered, font=\large, yshift=-0.5cm, xshift=-0.3cm, text=gray] (pc) at (nbg.north) {Perceptron};
+
+\end{tikzpicture}
+\end{document}

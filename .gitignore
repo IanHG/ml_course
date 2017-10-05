@@ -1,0 +1,13 @@
+*.x
+*.out
+*.log
+*.aux
+*.auxlock
+*.dpth
+*.vrb
+*.toc
+*.snm
+*.nav
+*.swp
+*.md5
+*.pdf
